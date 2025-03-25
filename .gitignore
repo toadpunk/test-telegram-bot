@@ -172,3 +172,24 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# SQLite databases
+*.db
+*.sqlite
+
+# Environment files
+.env.local
+.env.development
+
+# Secrets
+secrets/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cursor editor
+.cursor/
