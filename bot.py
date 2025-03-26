@@ -6,7 +6,6 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from openai import OpenAI
 from database import Database
-import httpx
 
 # Загрузка переменных окружения
 load_dotenv()
@@ -18,17 +17,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Настройка прокси для OpenAI
-proxies = {
-    "http": os.getenv('HTTP_PROXY'),
-    "https": os.getenv('HTTPS_PROXY')
-}
-
 # Инициализация клиентов
-client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY'),
-    http_client=httpx.Client(proxies=proxies)
-)
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 db = Database()
 
 # Базовая информация о компании
@@ -117,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Формируем контекст для OpenAI
     conversation_history = ""
-    for msg, resp, _ in reversed(recent_messages):
+    for msg, resp, _ in recent_messages:
         conversation_history += f"User: {msg}\nAssistant: {resp}\n"
 
     # Формируем промпт
@@ -129,7 +119,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     Текущий вопрос пользователя: {message}
 
-    Пожалуйста, ответьте на вопрос пользователя, используя информацию о компании.
+    Пожалуйста, ответьте на вопрос пользователя, используя информацию о компании и историю диалога.
+    Важно: учитывайте контекст предыдущих сообщений при формировании ответа.
     """
 
     try:
